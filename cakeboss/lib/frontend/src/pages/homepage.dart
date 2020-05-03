@@ -1,10 +1,10 @@
 
 import 'package:cakeboss/backend/authentication_bloc/bloc.dart';
-import 'package:cakeboss/backend/bloc/bloc.dart';
+import 'package:cakeboss/backend/login_bloc/bloc.dart';
 import 'package:cakeboss/backend/data/dataModel.dart';
 import 'package:cakeboss/frontend/custom_grid_view/src/widgets/staggered_grid_view.dart';
 import 'package:cakeboss/frontend/custom_grid_view/src/widgets/staggered_tile.dart';
-import 'package:cakeboss/frontend/src/pages/ventas.dart';
+import 'package:cakeboss/frontend/src/pages/sales_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
         title: 'Ventas',
         color: Colors.green,
         iconData: Icons.attach_money,
-        destino: VentasPage(login: login),
+        destino: SalesPage(login: login),
         valor: 10542800,
         meta: 15542800,
         subtitle: 'Total',

@@ -48,8 +48,4 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
   Stream<AuthenticationState> _mapLoggedOutToState() async* {
     yield Unauthenticated();
   }
-
-  Stream<AuthenticationState> _mapOtherMethodsToState() async* {
-    yield OtherMethodsState();
-  }
 }

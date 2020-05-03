@@ -33,28 +33,6 @@ class BarChart extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            button
-                ? RaisedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            // return _DialogForLists(
-                            //     items: dataProducts,
-                            //     selectedItems: dataProducts2,
-                            //     onSelectedItemListChanged: (cities) {
-                            //       setState(() {
-                            //         dataProducts2 = cities;
-                            //       });
-                            //       print(dataProducts2);
-                            //     });
-                          });
-                    },
-                    child: Text(
-                      'Elegir Productos',
-                    ),
-                  )
-                : SizedBox(),
             Container(
               width: MediaQuery.of(context).size.width,
               height: height,
