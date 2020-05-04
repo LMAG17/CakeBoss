@@ -1,10 +1,8 @@
 import 'package:cakeboss/backend/data/dataModel.dart';
-import 'package:cakeboss/backend/sales_bloc/bloc.dart';
 import 'package:cakeboss/frontend/src/charts/bar.dart';
 import 'package:cakeboss/frontend/src/charts/time.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 extension ColorExtension on String {
@@ -31,11 +29,63 @@ class _SalesPageState extends State<SalesPage> {
   final formato = NumberFormat('#,###');
   DateTime fechaInicial;
   DateTime fechaFinal;
+  bool value = false;
   List<PedidosDia> data;
 
   List<TicketDay> dataTicket2;
 
-  
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  List<PedidosTienda> dataPedidosTienda = [
+    PedidosTienda('Chia Fruver', 154, 20042540),
+    PedidosTienda('Bog sta fe', 106, 14683970),
+    PedidosTienda('Bog Cdad Jardin', 100, 14326670),
+    PedidosTienda('Bog Suba Vll eliza', 70, 10377460),
+    PedidosTienda('Med volador', 69, 9179410),
+    PedidosTienda('Med Tarapaca', 68, 8689390),
+    PedidosTienda('Bog quintaparedes', 59, 7214370),
+    PedidosTienda('Bog barranxas', 36, 5814170),
+    PedidosTienda('Med el diamante', 34, 5016740),
+    PedidosTienda('Bog suba salitre', 33, 4228320),
+    PedidosTienda('Bog la uribe', 28, 2944420),
+    PedidosTienda('Bog san javier', 19, 2741700),
+    PedidosTienda('Bog country', 18, 2500430),
+    PedidosTienda('Bog floresta', 14, 1792870),
+  ];
+  List<PedidosTienda> dataPedidosTiendaSelected = [];
+  List<charts.Series<PedidosTienda, String>> _dataPedidosTiendaCant() {
+    return [
+      charts.Series<PedidosTienda, String>(
+        id: 'Pedidos dia',
+        data: dataPedidosTiendaSelected,
+        domainFn: (PedidosTienda pedido, __) =>
+            "Fecha: ${pedido.shop} => Cant ",
+        measureFn: (PedidosTienda pedido, __) => pedido.amount,
+        colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+            this.widget.login.establishment.colors.primary.toColor()),
+        labelAccessorFn: (PedidosTienda pedido, _) =>
+            '${pedido.shop}: ${pedido.amount}',
+      ),
+    ];
+  }
+
+  List<charts.Series<PedidosTienda, String>> _dataPedidosTiendaVal() {
+    return [
+      charts.Series<PedidosTienda, String>(
+          id: 'Pedidos dia',
+          data: dataPedidosTiendaSelected,
+          domainFn: (PedidosTienda pedido, __) =>
+              "Fecha: ${pedido.shop} => valor ",
+          measureFn: (PedidosTienda pedido, __) => pedido.value,
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+              this.widget.login.establishment.colors.primary.toColor()),
+          labelAccessorFn: (PedidosTienda pedido, _) =>
+              '${pedido.shop}: ${formato.format(pedido.value)}')
+    ];
+  }
 
   List<PedidosDia> dataPedidosDia = [
     PedidosDia(DateTime.parse('2020-04-10'), 7, 399560),
@@ -55,90 +105,90 @@ class _SalesPageState extends State<SalesPage> {
     FranjaHor('Mañana', 232, 31203240),
     FranjaHor('Tarde', 595, 81817110),
   ];
-  List<charts.Series<FranjaHor, String>> _dataFranjas(String type) {
-    if (type == 'Cant') {
-      return [
-        charts.Series<FranjaHor, String>(
-          id: 'Franja horaria',
-          data: dataFranjas,
-          domainFn: (FranjaHor franja, __) => franja.tipo,
-          measureFn: (FranjaHor franja, __) => franja.amount,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
-          labelAccessorFn: (FranjaHor franaja, _) =>
-              '${franaja.tipo}: ${franaja.amount}',
-        )
-      ];
-    } else if (type == 'Val') {
-      return [
-        charts.Series<FranjaHor, String>(
-          id: 'Franja horaria',
-          data: dataFranjas,
-          domainFn: (FranjaHor franja, __) => franja.tipo,
-          measureFn: (FranjaHor franja, __) => franja.value,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
-          labelAccessorFn: (FranjaHor franaja, _) =>
-              '${franaja.tipo}: ${formato.format(franaja.value)}',
-        )
-      ];
-    }
+  List<charts.Series<FranjaHor, String>> _dataFranjasCant() {
+    return [
+      charts.Series<FranjaHor, String>(
+        id: 'Franja horaria',
+        data: dataFranjas,
+        domainFn: (FranjaHor franja, __) => franja.tipo,
+        measureFn: (FranjaHor franja, __) => franja.amount,
+        colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+            this.widget.login.establishment.colors.primary.toColor()),
+        labelAccessorFn: (FranjaHor franaja, _) =>
+            '${franaja.tipo}: ${franaja.amount}',
+      )
+    ];
   }
 
-  List<charts.Series<PedidosDia, String>> _dataPedidosDia(String type) {
-    if (type == 'Cant') {
-      return [
-        charts.Series<PedidosDia, String>(
-            id: 'Pedidos dia',
-            data: data,
-            domainFn: (PedidosDia pedido, __) =>
-                "Fecha: ${pedido.day.month}/${pedido.day.day} => Cant ",
-            measureFn: (PedidosDia pedido, __) => pedido.amount,
-            colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-                this.widget.login.establishment.colors.primary.toColor()),
-            labelAccessorFn: (PedidosDia pedido, _) =>
-                '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${pedido.amount}')
-      ];
-    } else if (type == 'Va') {
-      return [
-        charts.Series<PedidosDia, String>(
-            id: 'Pedidos dia',
-            data: data,
-            domainFn: (PedidosDia pedido, __) =>
-                "Fecha: ${pedido.day.month}/${pedido.day.day} => valor ",
-            measureFn: (PedidosDia pedido, __) => pedido.value,
-            colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-                this.widget.login.establishment.colors.primary.toColor()),
-            labelAccessorFn: (PedidosDia pedido, _) =>
-                '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${formato.format(pedido.value)}')
-      ];
-    }
+  List<charts.Series<FranjaHor, String>> _dataFranjasVal() {
+    return [
+      charts.Series<FranjaHor, String>(
+        id: 'Franja horaria',
+        data: dataFranjas,
+        domainFn: (FranjaHor franja, __) => franja.tipo,
+        measureFn: (FranjaHor franja, __) => franja.value,
+        colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+            this.widget.login.establishment.colors.primary.toColor()),
+        labelAccessorFn: (FranjaHor franaja, _) =>
+            '${franaja.tipo}: ${formato.format(franaja.value)}',
+      )
+    ];
   }
 
-  List<charts.Series<PedidosDia, DateTime>> _dataPedidosDiaTime(String type) {
-    if (type == 'Cant') {
-      return [
-        charts.Series<PedidosDia, DateTime>(
+  List<charts.Series<PedidosDia, String>> _dataPedidosDiaCant() {
+    return [
+      charts.Series<PedidosDia, String>(
           id: 'Pedidos dia',
           data: data,
-          domainFn: (PedidosDia pedido, __) => pedido.day,
+          domainFn: (PedidosDia pedido, __) =>
+              "Fecha: ${pedido.day.month}/${pedido.day.day} => Cant ",
           measureFn: (PedidosDia pedido, __) => pedido.amount,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
               this.widget.login.establishment.colors.primary.toColor()),
-        )
-      ];
-    } else if (type == 'Val') {
-      return [
-        charts.Series<PedidosDia, DateTime>(
+          labelAccessorFn: (PedidosDia pedido, _) =>
+              '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${pedido.amount}')
+    ];
+  }
+
+  List<charts.Series<PedidosDia, String>> _dataPedidosDiaVal() {
+    return [
+      charts.Series<PedidosDia, String>(
           id: 'Pedidos dia',
           data: data,
-          domainFn: (PedidosDia pedido, __) => pedido.day,
+          domainFn: (PedidosDia pedido, __) =>
+              "Fecha: ${pedido.day.month}/${pedido.day.day} => valor ",
           measureFn: (PedidosDia pedido, __) => pedido.value,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
               this.widget.login.establishment.colors.primary.toColor()),
-        )
-      ];
-    }
+          labelAccessorFn: (PedidosDia pedido, _) =>
+              '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${formato.format(pedido.value)}')
+    ];
+  }
+
+  List<charts.Series<PedidosDia, DateTime>> _dataPedidosDiaCantTime() {
+    return [
+      charts.Series<PedidosDia, DateTime>(
+        id: 'Pedidos dia',
+        data: data,
+        domainFn: (PedidosDia pedido, __) => pedido.day,
+        measureFn: (PedidosDia pedido, __) => pedido.amount,
+        colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+            this.widget.login.establishment.colors.primary.toColor()),
+      )
+    ];
+  }
+
+  List<charts.Series<PedidosDia, DateTime>> _dataPedidosDiaValTime() {
+    return [
+      charts.Series<PedidosDia, DateTime>(
+        id: 'Pedidos dia',
+        data: data,
+        domainFn: (PedidosDia pedido, __) => pedido.day,
+        measureFn: (PedidosDia pedido, __) => pedido.value,
+        colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+            this.widget.login.establishment.colors.primary.toColor()),
+      )
+    ];
   }
 
   List<TicketDay> dataTicketDay = [
@@ -164,7 +214,7 @@ class _SalesPageState extends State<SalesPage> {
           domainFn: (TicketDay ticket, __) =>
               "Fecha: ${ticket.day.month}/${ticket.day.day} => valor ",
           measureFn: (TicketDay ticket, __) => ticket.value,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
               this.widget.login.establishment.colors.primary.toColor()),
           labelAccessorFn: (TicketDay ticket, _) =>
               '${ticket.day.day}/${ticket.day.month}/${ticket.day.year}: ${formato.format(ticket.value)}')
@@ -196,7 +246,7 @@ class _SalesPageState extends State<SalesPage> {
           data: dataTicketStore,
           domainFn: (TicketStore ticket, __) => "${ticket.shop} => valor ",
           measureFn: (TicketStore ticket, __) => ticket.value,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
               this.widget.login.establishment.colors.primary.toColor()),
           labelAccessorFn: (TicketStore ticket, _) =>
               '${ticket.shop}: ${formato.format(ticket.value)}')
@@ -236,32 +286,32 @@ class _SalesPageState extends State<SalesPage> {
     PopularProducts('Belleza', 150, 474270),
   ];
   List<PopularProducts> dataProducts2 = [];
-  List<charts.Series<PopularProducts, String>> _dataProducts(String type) {
-    if (type == 'Cant') {
-      return [
-        charts.Series<PopularProducts, String>(
-            id: 'Demanda productos',
-            data: dataProducts2,
-            domainFn: (PopularProducts product, __) => product.prod,
-            measureFn: (PopularProducts product, __) => product.amount,
-            colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-                this.widget.login.establishment.colors.primary.toColor()),
-            labelAccessorFn: (PopularProducts product, _) =>
-                '${product.prod}: ${formato.format(product.amount)}')
-      ];
-    } else if (type == 'Val') {
-      return [
-        charts.Series<PopularProducts, String>(
-            id: 'Demanda productos',
-            data: dataProducts2,
-            domainFn: (PopularProducts product, __) => product.prod,
-            measureFn: (PopularProducts product, __) => product.value,
-            colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-                this.widget.login.establishment.colors.primary.toColor()),
-            labelAccessorFn: (PopularProducts product, _) =>
-                '${product.prod}: ${formato.format(product.value)}')
-      ];
-    }
+  List<charts.Series<PopularProducts, String>> _dataProductsCant() {
+    return [
+      charts.Series<PopularProducts, String>(
+          id: 'Demanda productos',
+          data: dataProducts2,
+          domainFn: (PopularProducts product, __) => product.prod,
+          measureFn: (PopularProducts product, __) => product.amount,
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+              this.widget.login.establishment.colors.primary.toColor()),
+          labelAccessorFn: (PopularProducts product, _) =>
+              '${product.prod}: ${formato.format(product.amount)}')
+    ];
+  }
+
+  List<charts.Series<PopularProducts, String>> _dataProductsVal() {
+    return [
+      charts.Series<PopularProducts, String>(
+          id: 'Demanda productos',
+          data: dataProducts2,
+          domainFn: (PopularProducts product, __) => product.prod,
+          measureFn: (PopularProducts product, __) => product.value,
+          colorFn: (_,__) => charts.ColorUtil.fromDartColor(
+              this.widget.login.establishment.colors.primary.toColor()),
+          labelAccessorFn: (PopularProducts product, _) =>
+              '${product.prod}: ${formato.format(product.value)}')
+    ];
   }
 
   List<DeliveriesAfterHours> dataDeliveriesAfterHours = [
@@ -278,7 +328,7 @@ class _SalesPageState extends State<SalesPage> {
         data: dataDeliveriesAfterHours,
         domainFn: (DeliveriesAfterHours delivery, _) => delivery.day,
         measureFn: (DeliveriesAfterHours delivery, _) => delivery.value,
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        colorFn: (_,__) => charts.MaterialPalette.red.shadeDefault,
       )
     ];
   }
@@ -302,494 +352,446 @@ class _SalesPageState extends State<SalesPage> {
                 i.day.isBefore(fechaFinal.add(Duration(days: 1))))
             .toList();
     Color mainColor = this.widget.login.establishment.colors.primary.toColor();
-    Color secondaryColor =
-        this.widget.login.establishment.colors.secondary.toColor();
-    return BlocConsumer<SalesBloc, SalesState>(
-        listener: (BuildContext context, SalesState state) {
-      if (state is SalesInitial) {
-        BlocProvider.of<SalesBloc>(context).add(FetchData(this.widget.login));
-      }
-      if(state is Success){
-        List<charts.Series<PedidosTienda, String>> _dataPedidosTienda(String type) {
-    if (type == 'Cant') {
-      return [
-        charts.Series<PedidosTienda, String>(
-          id: 'Pedidos dia',
-          data: state.storeOrdersSelected,
-          domainFn: (PedidosTienda pedido, __) =>
-              "Fecha: ${pedido.shop} => Cant ",
-          measureFn: (PedidosTienda pedido, __) => pedido.amount,
-          colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
-          labelAccessorFn: (PedidosTienda pedido, _) =>
-              '${pedido.shop}: ${pedido.amount}',
-        ),
-      ];
-    } else if (type == 'Val') {
-      return [
-        charts.Series<PedidosTienda, String>(
-            id: 'Pedidos dia',
-            data: state.storeOrdersSelected,
-            domainFn: (PedidosTienda pedido, __) =>
-                "Fecha: ${pedido.shop} => valor ",
-            measureFn: (PedidosTienda pedido, __) => pedido.value,
-            colorFn: (_, __) => charts.ColorUtil.fromDartColor(
-                this.widget.login.establishment.colors.primary.toColor()),
-            labelAccessorFn: (PedidosTienda pedido, _) =>
-                '${pedido.shop}: ${formato.format(pedido.value)}')
-      ];
-    }
-  }
-      }
-    }, builder: (BuildContext context, SalesState state) {
-      if(state is Success){
-      return SafeArea(
-        bottom: true,
-        top: false,
-        child: DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor:
-                  this.widget.login.establishment.colors.primary.toColor(),
-              bottom: TabBar(
-                indicatorColor: Colors.white,
-                tabs: [
-                  Tab(
-                    child: Text("Cantidad"),
-                  ),
-                  Tab(
-                    child: Text("Valor"),
-                  ),
-                  Tab(
-                    child: Text("Ticket"),
-                  ),
-                ],
-              ),
-              title: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Row(children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                'https://chefmenu.co/restaurantes/bogota/tiendas-d1/tiendas-d1-logo.jpg'),
-                          ),
-                        ),
-                        height: 24,
-                        width: 24,
-                      ),
-                      Text('   Ventas')
-                    ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          ButtonTheme(
-                            minWidth: size.width / 3,
-                            child: RaisedButton(
-                                color: mainColor,
-                                textColor: secondaryColor,
-                                child: Text(fechaInicial != null
-                                    ? "${fechaInicial.day}/${fechaInicial.month}/${fechaInicial.year}"
-                                    : 'Fecha inicial'),
-                                onPressed: () {
-                                  showDatePicker(
-                                    context: context,
-                                    initialDate: fechaInicial != null
-                                        ? fechaInicial
-                                        : DateTime.now(),
-                                    firstDate: dataPedidosDia.first.day,
-                                    lastDate: DateTime.now(),
-                                  ).then((v) {
-                                    fechaInicial = v;
-                                    fechaFinal = v.add(Duration(days: 10));
-                                    setState(() {});
-                                  });
-                                }),
-                          ),
-                          ButtonTheme(
-                            minWidth: size.width / 3,
-                            child: RaisedButton(
-                                elevation: 0,
-                                color: mainColor,
-                                textColor: secondaryColor,
-                                child: Text(fechaFinal != null
-                                    ? "${fechaFinal.day}/${fechaFinal.month}/${fechaFinal.year}"
-                                    : 'Fecha final'),
-                                onPressed: () {
-                                  showDatePicker(
-                                    context: context,
-                                    initialDate: fechaFinal != null
-                                        ? fechaFinal
-                                        : fechaInicial != null
-                                            ? fechaInicial
-                                                .add(Duration(days: 10))
-                                            : DateTime.now(),
-                                    firstDate: fechaInicial,
-                                    lastDate:
-                                        (fechaInicial.add(Duration(days: 10))),
-                                  ).then((v) {
-                                    fechaFinal = v;
-                                    setState(() {});
-                                  });
-                                }),
-                          )
-                        ]),
-                  ]),
-            ),
-            body: TabBarView(
-              children: [
-                SingleChildScrollView(
-                  child: Container(
-                    width: size.width,
-                    child: Column(
-                      children: <Widget>[
-                        BarChart(
-                          button: false,
-                          height: size.height * (data.length / 20),
-                          seriesList: _dataPedidosDia('Cant'),
-                          title: 'Cantidad de pedidos',
-                        ),
-                        TimeChart(
-                          seriesList: _dataPedidosDiaTime('Cant'),
-                          height: size.height * 0.3,
-                          title: 'Cantidad de pedidos',
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Cantidad de pedidos por tienda',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                RaisedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return _MyDialog(
-                                                shatblisments:
-                                                    state.storeOrders,
-                                                selectedStablishments:
-                                                    state.storeOrdersSelected,
-                                                onSelectedStablishmentsListChanged:
-                                                    (cities) {
-                                                  setState(() {
-                                                    state.storeOrdersSelected =
-                                                        cities;
-                                                  });
-                                                });
-                                          });
-                                    },
-                                    child: Text('Elegir establecimientos')),
-                                Container(
-                                  width: size.width,
-                                  height: size.height *
-                                      (state.storeOrdersSelected.length / 30),
-                                  child: state.storeOrdersSelected.length > 0
-                                      ? charts.BarChart(
-                                          _dataPedidosTienda('Cant'),
-                                          vertical: false,
-                                          animate: true,
-                                          barRendererDecorator: charts
-                                              .BarLabelDecorator<String>(),
-                                          domainAxis: charts.OrdinalAxisSpec(
-                                              renderSpec:
-                                                  charts.NoneRenderSpec()),
-                                        )
-                                      : Text(
-                                          'Seleccione algun establecimiento'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Cantidad de pedidos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: size.width,
-                                  height: size.height * 0.3,
-                                  child: charts.PieChart(_dataFranjas('Cant'),
-                                      animate: true,
-                                      defaultRenderer: charts.ArcRendererConfig(
-                                          arcWidth: 30,
-                                          arcRendererDecorators: [
-                                            charts.ArcLabelDecorator()
-                                          ])),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Cantidad por productos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                RaisedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return _MyDialogProducts(
-                                                products: dataProducts,
-                                                selectedProducts: dataProducts2,
-                                                onSelectedProductsListChanged:
-                                                    (cities) {
-                                                  setState(() {
-                                                    dataProducts2 = cities;
-                                                  });
-                                                });
-                                          });
-                                    },
-                                    child: Text('Elegir Productos')),
-                                Container(
-                                  width: size.width,
-                                  height:
-                                      size.height * (dataProducts2.length / 30),
-                                  child: dataProducts2.length > 0
-                                      ? charts.BarChart(
-                                          _dataProducts('Cant'),
-                                          vertical: false,
-                                          animate: true,
-                                          barRendererDecorator: charts
-                                              .BarLabelDecorator<String>(),
-                                          domainAxis: charts.OrdinalAxisSpec(
-                                              renderSpec:
-                                                  charts.NoneRenderSpec()),
-                                        )
-                                      : Text('Seleccione algun producto'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        TimeChart(
-                          seriesList: _dataDeliveriesAfterHours(),
-                          height: size.height * 0.3,
-                          title: 'Pedidos fuera del horario',
-                        ),
-                      ],
-                    ),
-                  ),
+    Color secondaryColor = this.widget.login.establishment.colors.secondary.toColor();
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor:
+                this.widget.login.establishment.colors.primary.toColor(),
+            bottom: TabBar(
+              indicatorColor: Colors.white,
+              tabs: [
+                Tab(
+                  child: Text("Cantidad"),
                 ),
-                SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        BarChart(
-                          seriesList: _dataPedidosDia('Val'),
-                          height: size.height * (data.length / 20),
-                          title: 'Valor de pedidos por dia',
-                          button: false,
-                        ),
-                        TimeChart(
-                          seriesList: _dataPedidosDiaTime('Val'),
-                          height: size.height * 0.3,
-                          title: 'Cantidad de pedidos',
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Valor de pedidos por tienda',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                RaisedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return _MyDialog(
-                                                shatblisments:
-                                                    dataPedidosTienda,
-                                                selectedStablishments:
-                                                    dataPedidosTiendaSelected,
-                                                onSelectedStablishmentsListChanged:
-                                                    (cities) {
-                                                  setState(() {
-                                                    dataPedidosTiendaSelected =
-                                                        cities;
-                                                  });
-                                                });
-                                          });
-                                    },
-                                    child: Text('Elegir establecimientos')),
-                                Container(
-                                  width: size.width,
-                                  height: size.height *
-                                      (dataPedidosTiendaSelected.length / 30),
-                                  child: dataPedidosTiendaSelected.length > 0
-                                      ? charts.BarChart(
-                                          _dataPedidosTienda('Val'),
-                                          vertical: false,
-                                          animate: true,
-                                          barRendererDecorator: charts
-                                              .BarLabelDecorator<String>(),
-                                          domainAxis: charts.OrdinalAxisSpec(
-                                              renderSpec:
-                                                  charts.NoneRenderSpec()),
-                                        )
-                                      : Text(
-                                          'Seleccione algun establecimiento'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Cantidad de pedidos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  width: size.width,
-                                  height: size.height * 0.3,
-                                  child: charts.PieChart(_dataFranjas('Val'),
-                                      animate: true,
-                                      defaultRenderer: charts.ArcRendererConfig(
-                                          arcWidth: 30,
-                                          arcRendererDecorators: [
-                                            charts.ArcLabelDecorator()
-                                          ])),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Valor por productos',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                RaisedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return _MyDialogProducts(
-                                                products: dataProducts,
-                                                selectedProducts: dataProducts2,
-                                                onSelectedProductsListChanged:
-                                                    (cities) {
-                                                  setState(() {
-                                                    dataProducts2 = cities;
-                                                  });
-                                                });
-                                          });
-                                    },
-                                    child: Text('Elegir Productos')),
-                                Container(
-                                  width: size.width,
-                                  height:
-                                      size.height * (dataProducts2.length / 30),
-                                  child: dataProducts2.length > 0
-                                      ? charts.BarChart(
-                                          _dataProducts('Val'),
-                                          vertical: false,
-                                          animate: true,
-                                          barRendererDecorator: charts
-                                              .BarLabelDecorator<String>(),
-                                          domainAxis: charts.OrdinalAxisSpec(
-                                              renderSpec:
-                                                  charts.NoneRenderSpec()),
-                                        )
-                                      : Text('Seleccione algun producto'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                Tab(
+                  child: Text("Valor"),
                 ),
-                SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        BarChart(
-                          seriesList: _dataTicket(),
-                          height: size.height * (data.length / 20),
-                          title: 'Ticket Promedio por dia',
-                          button: false,
-                        ),
-                        BarChart(
-                          seriesList: _dataTicketStore(),
-                          height: size.height * 0.4,
-                          title: 'Ticket Promedio por tienda',
-                          button: false,
-                        )
-                      ],
-                    ),
-                  ),
+                Tab(
+                  child: Text("Ticket"),
                 ),
               ],
             ),
+            title: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://chefmenu.co/restaurantes/bogota/tiendas-d1/tiendas-d1-logo.jpg'),
+                        ),
+                      ),
+                      height: 24,
+                      width: 24,
+                    ),
+                    Text('   Ventas')
+                  ]),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        ButtonTheme(
+                          minWidth: size.width / 3,
+                          child: RaisedButton(
+                              color: mainColor,
+                              textColor: secondaryColor,
+                              child: Text(fechaInicial != null
+                                  ? "${fechaInicial.day}/${fechaInicial.month}/${fechaInicial.year}"
+                                  : 'Fecha inicial'),
+                              onPressed: () {
+                                showDatePicker(
+                                  context: context,
+                                  initialDate: fechaInicial != null
+                                      ? fechaInicial
+                                      : DateTime.now(),
+                                  firstDate: dataPedidosDia.first.day,
+                                  lastDate: DateTime.now(),
+                                ).then((v) {
+                                  fechaInicial = v;
+                                  fechaFinal = v.add(Duration(days: 10));
+                                  setState(() {});
+                                });
+                              }),
+                        ),
+                        ButtonTheme(
+                          minWidth: size.width / 3,
+                          child: RaisedButton(
+                            elevation: 0,
+                              color: mainColor,
+                              textColor: secondaryColor,
+                              child: Text(fechaFinal != null
+                                  ? "${fechaFinal.day}/${fechaFinal.month}/${fechaFinal.year}"
+                                  : 'Fecha final'),
+                              onPressed: () {
+                                showDatePicker(
+                                  context: context,
+                                  initialDate: fechaFinal != null
+                                      ? fechaFinal
+                                      : fechaInicial != null
+                                          ? fechaInicial.add(Duration(days: 10))
+                                          : DateTime.now(),
+                                  firstDate: fechaInicial,
+                                  lastDate:
+                                      (fechaInicial.add(Duration(days: 10))),
+                                ).then((v) {
+                                  fechaFinal = v;
+                                  setState(() {});
+                                });
+                              }),
+                        )
+                      ]),
+                ]),
+          ),
+          body: TabBarView(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  width: size.width,
+                  child: Column(
+                    children: <Widget>[
+                      BarChart(
+                        button: false,
+                        height: size.height * (data.length / 20),
+                        seriesList: _dataPedidosDiaCant(),
+                        title: 'Cantidad de pedidos',
+                      ),
+                      TimeChart(
+                        seriesList: _dataPedidosDiaCantTime(),
+                        height: size.height * 0.3,
+                        title: 'Cantidad de pedidos',
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Cantidad de pedidos por tienda',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              RaisedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return _MyDialog(
+                                              shatblisments: dataPedidosTienda,
+                                              selectedStablishments:
+                                                  dataPedidosTiendaSelected,
+                                              onSelectedStablishmentsListChanged:
+                                                  (cities) {
+                                                setState(() {
+                                                  dataPedidosTiendaSelected =
+                                                      cities;
+                                                });
+                                           
+                                              });
+                                        });
+                                  },
+                                  child: Text('Elegir establecimientos')),
+                              Container(
+                                width: size.width,
+                                height: size.height *
+                                    (dataPedidosTiendaSelected.length / 30),
+                                child:  dataPedidosTiendaSelected.length > 0
+                                    ? charts.BarChart(
+                                        _dataPedidosTiendaCant(),
+                                        vertical: false,
+                                        animate: true,
+                                        barRendererDecorator:
+                                            charts.BarLabelDecorator<String>(),
+                                        domainAxis: charts.OrdinalAxisSpec(
+                                            renderSpec:
+                                                charts.NoneRenderSpec()),
+                                      )
+                                    : Text('Seleccione algun establecimiento'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Cantidad de pedidos',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: size.width,
+                                height: size.height * 0.3,
+                                child: charts.PieChart(_dataFranjasCant(),
+                                    animate: true,
+                                    defaultRenderer: charts.ArcRendererConfig(
+                                        arcWidth: 30,
+                                        arcRendererDecorators: [
+                                          charts.ArcLabelDecorator()
+                                        ])),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Cantidad por productos',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              RaisedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return _MyDialogProducts(
+                                              products: dataProducts,
+                                              selectedProducts: dataProducts2,
+                                              onSelectedProductsListChanged:
+                                                  (cities) {
+                                                setState(() {
+                                                  dataProducts2 = cities;
+                                                });
+                                               
+                                              });
+                                        });
+                                  },
+                                  child: Text('Elegir Productos')),
+                              Container(
+                                width: size.width,
+                                height:
+                                    size.height * (dataProducts2.length / 30),
+                                child:  dataProducts2.length > 0
+                                    ? charts.BarChart(
+                                        _dataProductsCant(),
+                                        vertical: false,
+                                        animate: true,
+                                        barRendererDecorator:
+                                            charts.BarLabelDecorator<String>(),
+                                        domainAxis: charts.OrdinalAxisSpec(
+                                            renderSpec:
+                                                charts.NoneRenderSpec()),
+                                      )
+                                    : Text('Seleccione algun producto'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      TimeChart(
+                        seriesList: _dataDeliveriesAfterHours(),
+                        height: size.height * 0.3,
+                        title: 'Pedidos fuera del horario',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      BarChart(
+                        seriesList: _dataPedidosDiaVal(),
+                        height: size.height * (data.length / 20),
+                        title: 'Valor de pedidos por dia',
+                        button: false,
+                      ),
+                      TimeChart(
+                        seriesList: _dataPedidosDiaValTime(),
+                        height: size.height * 0.3,
+                        title: 'Cantidad de pedidos',
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Valor de pedidos por tienda',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              RaisedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return _MyDialog(
+                                              shatblisments: dataPedidosTienda,
+                                              selectedStablishments:
+                                                  dataPedidosTiendaSelected,
+                                              onSelectedStablishmentsListChanged:
+                                                  (cities) {
+                                                setState(() {
+                                                  dataPedidosTiendaSelected =
+                                                      cities;
+                                                });
+                                                
+                                              });
+                                        });
+                                  },
+                                  child: Text('Elegir establecimientos')),
+                              Container(
+                                width: size.width,
+                                height: size.height *
+                                    (dataPedidosTiendaSelected.length / 30),
+                                child:dataPedidosTiendaSelected.length > 0
+                                    ? charts.BarChart(
+                                        _dataPedidosTiendaVal(),
+                                        vertical: false,
+                                        animate: true,
+                                        barRendererDecorator:
+                                            charts.BarLabelDecorator<String>(),
+                                        domainAxis: charts.OrdinalAxisSpec(
+                                            renderSpec:
+                                                charts.NoneRenderSpec()),
+                                      )
+                                    : Text('Seleccione algun establecimiento'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Cantidad de pedidos',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: size.width,
+                                height: size.height * 0.3,
+                                child: charts.PieChart(_dataFranjasVal(),
+                                    animate: true,
+                                    defaultRenderer: charts.ArcRendererConfig(
+                                        arcWidth: 30,
+                                        arcRendererDecorators: [
+                                          charts.ArcLabelDecorator()
+                                        ])),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Valor por productos',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              RaisedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return _MyDialogProducts(
+                                              products: dataProducts,
+                                              selectedProducts: dataProducts2,
+                                              onSelectedProductsListChanged:
+                                                  (cities) {
+                                                setState(() {
+                                                  dataProducts2 = cities;
+                                                });
+                                             
+                                              });
+                                        });
+                                  },
+                                  child: Text('Elegir Productos')),
+                              Container(
+                                width: size.width,
+                                height:
+                                    size.height * (dataProducts2.length / 30),
+                                child:  dataProducts2.length > 0
+                                    ? charts.BarChart(
+                                        _dataProductsVal(),
+                                        vertical: false,
+                                        animate: true,
+                                        barRendererDecorator:
+                                            charts.BarLabelDecorator<String>(),
+                                        domainAxis: charts.OrdinalAxisSpec(
+                                            renderSpec:
+                                                charts.NoneRenderSpec()),
+                                      )
+                                    : Text('Seleccione algun producto'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      BarChart(
+                        seriesList: _dataTicket(),
+                        height: size.height * (data.length / 20),
+                        title: 'Ticket Promedio por dia',
+                        button: false,
+                      ),
+                      BarChart(
+                        seriesList: _dataTicketStore(),
+                        height: size.height * 0.4,
+                        title: 'Ticket Promedio por tienda',
+                        button: false,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      );}
-    });
+      ),
+    );
   }
 }
 
