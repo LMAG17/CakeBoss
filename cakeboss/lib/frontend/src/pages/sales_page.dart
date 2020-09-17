@@ -5,18 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 
-extension ColorExtension on String {
-  toColor() {
-    var hexColor = this.replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    if (hexColor.length == 8) {
-      return Color(int.parse("0x$hexColor"));
-    }
-  }
-}
-
 class SalesPage extends StatefulWidget {
   Login login;
   SalesPage({Key key, @required this.login}) : super(key: key);
@@ -65,7 +53,7 @@ class _SalesPageState extends State<SalesPage> {
             "Fecha: ${pedido.shop} => Cant ",
         measureFn: (PedidosTienda pedido, __) => pedido.amount,
         colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-            this.widget.login.establishment.colors.primary.toColor()),
+            Color.fromRGBO(219, 7, 30, 1)),
         labelAccessorFn: (PedidosTienda pedido, _) =>
             '${pedido.shop}: ${pedido.amount}',
       ),
@@ -81,7 +69,7 @@ class _SalesPageState extends State<SalesPage> {
               "Fecha: ${pedido.shop} => valor ",
           measureFn: (PedidosTienda pedido, __) => pedido.value,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (PedidosTienda pedido, _) =>
               '${pedido.shop}: ${formato.format(pedido.value)}')
     ];
@@ -113,7 +101,7 @@ class _SalesPageState extends State<SalesPage> {
         domainFn: (FranjaHor franja, __) => franja.tipo,
         measureFn: (FranjaHor franja, __) => franja.amount,
         colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-            this.widget.login.establishment.colors.primary.toColor()),
+            Color.fromRGBO(219, 7, 30, 1)),
         labelAccessorFn: (FranjaHor franaja, _) =>
             '${franaja.tipo}: ${franaja.amount}',
       )
@@ -128,7 +116,7 @@ class _SalesPageState extends State<SalesPage> {
         domainFn: (FranjaHor franja, __) => franja.tipo,
         measureFn: (FranjaHor franja, __) => franja.value,
         colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-            this.widget.login.establishment.colors.primary.toColor()),
+            Color.fromRGBO(219, 7, 30, 1)),
         labelAccessorFn: (FranjaHor franaja, _) =>
             '${franaja.tipo}: ${formato.format(franaja.value)}',
       )
@@ -144,7 +132,7 @@ class _SalesPageState extends State<SalesPage> {
               "Fecha: ${pedido.day.month}/${pedido.day.day} => Cant ",
           measureFn: (PedidosDia pedido, __) => pedido.amount,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (PedidosDia pedido, _) =>
               '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${pedido.amount}')
     ];
@@ -159,7 +147,7 @@ class _SalesPageState extends State<SalesPage> {
               "Fecha: ${pedido.day.month}/${pedido.day.day} => valor ",
           measureFn: (PedidosDia pedido, __) => pedido.value,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (PedidosDia pedido, _) =>
               '${pedido.day.day}/${pedido.day.month}/${pedido.day.year}: ${formato.format(pedido.value)}')
     ];
@@ -173,7 +161,7 @@ class _SalesPageState extends State<SalesPage> {
         domainFn: (PedidosDia pedido, __) => pedido.day,
         measureFn: (PedidosDia pedido, __) => pedido.amount,
         colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-            this.widget.login.establishment.colors.primary.toColor()),
+            Color.fromRGBO(219, 7, 30, 1)),
       )
     ];
   }
@@ -186,7 +174,7 @@ class _SalesPageState extends State<SalesPage> {
         domainFn: (PedidosDia pedido, __) => pedido.day,
         measureFn: (PedidosDia pedido, __) => pedido.value,
         colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-            this.widget.login.establishment.colors.primary.toColor()),
+            Color.fromRGBO(219, 7, 30, 1)),
       )
     ];
   }
@@ -215,7 +203,7 @@ class _SalesPageState extends State<SalesPage> {
               "Fecha: ${ticket.day.month}/${ticket.day.day} => valor ",
           measureFn: (TicketDay ticket, __) => ticket.value,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (TicketDay ticket, _) =>
               '${ticket.day.day}/${ticket.day.month}/${ticket.day.year}: ${formato.format(ticket.value)}')
     ];
@@ -247,7 +235,7 @@ class _SalesPageState extends State<SalesPage> {
           domainFn: (TicketStore ticket, __) => "${ticket.shop} => valor ",
           measureFn: (TicketStore ticket, __) => ticket.value,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (TicketStore ticket, _) =>
               '${ticket.shop}: ${formato.format(ticket.value)}')
     ];
@@ -294,7 +282,7 @@ class _SalesPageState extends State<SalesPage> {
           domainFn: (PopularProducts product, __) => product.prod,
           measureFn: (PopularProducts product, __) => product.amount,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (PopularProducts product, _) =>
               '${product.prod}: ${formato.format(product.amount)}')
     ];
@@ -308,7 +296,7 @@ class _SalesPageState extends State<SalesPage> {
           domainFn: (PopularProducts product, __) => product.prod,
           measureFn: (PopularProducts product, __) => product.value,
           colorFn: (_,__) => charts.ColorUtil.fromDartColor(
-              this.widget.login.establishment.colors.primary.toColor()),
+              Color.fromRGBO(219, 7, 30, 1)),
           labelAccessorFn: (PopularProducts product, _) =>
               '${product.prod}: ${formato.format(product.value)}')
     ];
@@ -351,8 +339,8 @@ class _SalesPageState extends State<SalesPage> {
                 i.day.isAfter(fechaInicial.add(Duration(days: -1))) &&
                 i.day.isBefore(fechaFinal.add(Duration(days: 1))))
             .toList();
-    Color mainColor = this.widget.login.establishment.colors.primary.toColor();
-    Color secondaryColor = this.widget.login.establishment.colors.secondary.toColor();
+    Color mainColor =Color.fromRGBO(219, 7, 30, 1);
+    Color secondaryColor = Color.fromRGBO(0, 109, 181, 1);
     return SafeArea(
       bottom: true,
       top: false,
@@ -361,7 +349,7 @@ class _SalesPageState extends State<SalesPage> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor:
-                this.widget.login.establishment.colors.primary.toColor(),
+                mainColor,
             bottom: TabBar(
               indicatorColor: Colors.white,
               tabs: [

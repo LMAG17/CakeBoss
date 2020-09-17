@@ -8,7 +8,7 @@ class ServiceInteractor extends ServiceFactory {
   Future<Login> loginPost(Credentials send) async {
     try {
       String output = await handleMethod(
-          'POST', '$serverPrimary$routeBasePrimary$routeAuthLogin',
+          'GET', 'https://us-central1-aphrodite-522bb.cloudfunctions.net/app/login',
           send: send.toRawJson());
       Login object = Login.fromJson(json.decode(output));
       // print(object);

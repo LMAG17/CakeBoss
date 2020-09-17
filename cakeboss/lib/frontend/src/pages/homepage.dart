@@ -1,9 +1,12 @@
 
+import 'dart:core';
+
 import 'package:cakeboss/backend/authentication_bloc/bloc.dart';
 import 'package:cakeboss/backend/login_bloc/bloc.dart';
 import 'package:cakeboss/backend/data/dataModel.dart';
 import 'package:cakeboss/frontend/custom_grid_view/src/widgets/staggered_grid_view.dart';
 import 'package:cakeboss/frontend/custom_grid_view/src/widgets/staggered_tile.dart';
+import 'package:cakeboss/frontend/src/pages/noPage.dart';
 import 'package:cakeboss/frontend/src/pages/sales_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,7 +46,7 @@ class HomePage extends StatelessWidget {
         title: 'Estadisticas',
         color: Colors.amber,
         iconData: Icons.insert_chart,
-        destino: null,
+        destino: EmptyWidget(),
         valor: 1020,
         meta: 2020,
         subtitle: 'Facturas',
@@ -52,7 +55,7 @@ class HomePage extends StatelessWidget {
         title: 'Publicidad',
         color: Colors.brown,
         iconData: Icons.public,
-        destino: null,
+        destino: EmptyWidget(),
         valor: 1020,
         meta: 1203,
         subtitle: 'Alertas',
@@ -85,7 +88,7 @@ class HomePage extends StatelessWidget {
       const StaggeredTile.count(2, 2),
     ];
     Color colorFondo = Colors.white;
-    Color mainColor = login.establishment.colors.primary.toColor();
+    Color mainColor = Color.fromRGBO(219, 7, 30, 1);
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Failure) {
@@ -202,13 +205,13 @@ class _CustomGridCard extends StatelessWidget {
       this.meta,
       this.subtitle});
 
-  final String title;
+  final  title;
   final Color color;
   final IconData iconData;
   final Widget destino;
   final double valor;
   final double meta;
-  final String subtitle;
+  final  subtitle;
   @override
   Widget build(BuildContext context) {
     final formato = NumberFormat('#,###');
